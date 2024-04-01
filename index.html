@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>绘制二次函数图像</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+</head>
+<body>
+
+<h2>输入二次函数参数</h2>
+<form id="quadraticForm">
+    <label for="a">a (二次项系数):</label>
+    <input type="number" id="a" name="a" step="any" required> <br><br>
+    <label for="b">b (一次项系数):</label>
+    <input type="number" id="b" name="b" step="any" required> <br><br>
+    <label for="c">c (常数项):</label>
+    <input type="number" id="c" name="c" step="any" required> <br><br>
+    <input type="button" value="绘制图像" onclick="drawChart()">
+</form>
+
+<div>
+    <canvas id="quadraticChart" width="1000" height="500"></canvas>
+</div>
+
+<script>
+function drawChart() {
+    var a = document.getElementById('a').value;
+    var b = document.getElementById('b').value;
+    var c = document.getElementById('c').value;
+
+    a = parseFloat(a);
+    b = parseFloat(b);
+    c = parseFloat(c);
+
+    var dataPoints = [];
+    for(var x = -10; x <= 10; x += 0.1) {
+        var y = a * x * x + b * x + c;
+        dataPoints.push({x: x, y: y});
+    }
+
+    var ctx = document.getElementById('quadraticChart').getContext('2d');
+
+    if(window.myQuadraticChart instanceof Chart) {
+        window.myQuadraticChart.destroy();
+    }
+
+    window.myQuadraticChart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'y = ' + a + 'x² + ' + b + 'x + ' + c,
+                data: dataPoints,
+                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                borderColor: 'rgba(0, 123, 255, 1)',
+                showLine: true,
+                fill: false,
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                },
+                y: {
+                    type: 'linear',
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                zoom: {
+                    pan: {
+                        enabled: true, // 启用拖拽
+                        mode: 'xy'     // 在x和y轴方向上拖拽
+                    },
+                    zoom: {
+                        wheel: {
+                            enabled: true, // 启用鼠标滚轮缩放
+                        },
+                        pinch: {
+                            enabled: true, // 启用触摸缩放
+                            mode: 'xy'
+                        },
+                        mode: 'xy'        // 在x和y轴方向上缩放
+                    }
+                }
+            }
+        }
+    });
+}
+</script>
+
+</body>
+</html>
